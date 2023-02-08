@@ -1,12 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="./main.js"></script>
   <title>Document</title>
 </head>
+
 <body>
-  <script src="./main.js"></script>
+  <div class="container">
+    <h2>Game: "Who Wants to Be a Millionaire?"</h2>
+
+    <div class="start__content">
+      <input id="input__user-name" type="text" placeholder="Enter your name">
+      <button class="start">Start</button>
+    </div>
+
+    <div class="main-content">
+        <button id="fiftyFiftyBtn">50/50</button>
+        <button id="skipTheQuestionBtn">Skip the question</button>
+
+      <div class="questions__container">
+        <span id="question__text"></span>
+        <ol type="A" class="answers__list"></ol>
+      </div>
+    </div>
+
+    <div class="end">
+      <p id="game-end"></p>
+      <button class="repeat">Repeat</button>
+    </div>
+  </div>
 </body>
+
 </html>
