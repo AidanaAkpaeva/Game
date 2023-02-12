@@ -72,9 +72,10 @@ game().then(dataJSON => {
     let playAgain = document.createElement('button');
     playAgain.innerHTML = 'Play again';
     end.appendChild(playAgain).id = 'play-again';
+    bank === 1000000 ?   gameEnd.innerHTML = `${userName}, сongratulations! You are a millionaire! You have earned: ${bank}$`
+      : gameEnd.innerHTML = `${userName}, you've lost! You have earned: ${bank}$`
 
     playAgain.addEventListener("click", () => startGame());
-    gameEnd.innerHTML = `${userName}, you've lost! You have earned: ${bank}$`
   }
 
   // Проверка ответа на правильность
@@ -185,5 +186,5 @@ game().then(dataJSON => {
   }
 
   startGame();
-
+  
 })
