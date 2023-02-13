@@ -1,3 +1,4 @@
+//  5 этап - Исправление ошибок и добавление кнопки "Старт"
 let container = document.getElementById('container');
 
 const URL = 'https://pastebin.com/raw/QRGzxxEy'; //JSON-файл с вопросами
@@ -18,7 +19,6 @@ async function game() {
 }
 
 game().then(dataJSON => {
-  // 50/50
   // 50/50
   let hintFiftyFifty = (dataQuestion, allAnswers) => {
     hint1 = false;
@@ -193,5 +193,4 @@ game().then(dataJSON => {
   }
 
   startGame();
-
 })

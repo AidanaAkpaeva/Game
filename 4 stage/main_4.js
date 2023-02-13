@@ -1,9 +1,12 @@
+// 4 этап -  Добавлен счетчик банка и ввод имени
 let container = document.getElementById('container');
 
 const URL = 'https://pastebin.com/raw/QRGzxxEy'; //JSON-файл с вопросами
+let userName = '';
 let questionNumber = 0;
+let coutn = 0;
+let bank = 0;
 let userAnswer = '';
-
 let hint1 = true;
 let hint2 = true;
 
@@ -40,6 +43,7 @@ game().then(dataJSON => {
   let hintSkipTheQuestion = () => {
     hint2 = false;
     outputRandomQuestions();
+    bankCounter(questionNumber);
   }
 
   // Конец игры
@@ -56,8 +60,27 @@ game().then(dataJSON => {
     let playAgain = document.createElement('button');
     playAgain.innerHTML = 'Play again';
     end.appendChild(playAgain).id = 'play-again';
-    playAgain.addEventListener("click", () => startGame());
+    bank === 1000000 ? gameEnd.innerHTML = `${userName}, сongratulations! You are a millionaire! You have earned: ${bank}$`
+      : gameEnd.innerHTML = `${userName}, you've lost! You have earned: ${bank}$`
+
+    playAgain.addEventListener("click", () => enterName());
   }
+
+    // Счетчик заработанных денег
+    let bankCounter = (questionNumber) => {
+      if (questionNumber < 4) {
+        bank = bank + 100;
+      } else if (questionNumber === 4) {
+        bank = 500;
+      }
+      else if (questionNumber > 4 && questionNumber < 12) {
+        bank = bank * 2;
+      } else if (questionNumber === 12) {
+        bank = 125000;
+      } else if (questionNumber > 12) {
+        bank = bank * 2;
+      }
+    }
 
   // Проверка ответа на правильность
   let checkTheAnswer = (answerItem, dataQuestion) => {
@@ -66,10 +89,10 @@ game().then(dataJSON => {
 
       userAnswer === dataQuestion[dataQuestion["answer"]] ?
         (
-          outputRandomQuestions()
+          outputRandomQuestions(),
+          bankCounter(questionNumber)
         ) : (
-          gameOver(),
-          console.log('No correct')
+          gameOver()
         )
     })
   }
@@ -124,7 +147,7 @@ game().then(dataJSON => {
         checkTheAnswer(answerItem, dataQuestion);
       }
     } else {
-      gameOver();
+      console.log('You win!')
     }
 
     fiftyFiftyBtn.addEventListener("click", () => hintFiftyFifty(dataQuestion, allAnswers));
@@ -147,23 +170,13 @@ game().then(dataJSON => {
     startContent.appendChild(startBtn).id = 'start';
 
     startBtn.addEventListener("click", () => {
+      userName = inputUserName.value;
+      inputUserName.value = '';
       hint1 = true;
       hint2 = true;
       outputRandomQuestions();
     });
   }
 
-  // Начало игры
-  let startGame = () => {
-    container.innerHTML = '';
-
-    let startGameBtn = document.createElement('button');
-    container.appendChild(startGameBtn);
-    startGameBtn.innerHTML = 'Start'
-
-    startGameBtn.addEventListener("click", () => enterName());
-  }
-
-  startGame();
-
+  enterName();
 })

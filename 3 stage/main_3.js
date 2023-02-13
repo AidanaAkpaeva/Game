@@ -1,32 +1,45 @@
+// 3 этап - вывести подсказки
 let container = document.getElementById('container');
 
 const URL = 'https://pastebin.com/raw/QRGzxxEy'; //JSON-файл с вопросами
-let userName = '';
+
 let questionNumber = 0;
-let userAnswer = '';
+let hint1 = true;
+let hint2 = true;
 
 async function game() {
   const response = await fetch(URL);
-  const dataJSON =  response.json();
+  const dataJSON = response.json();
   return dataJSON;
 }
 
 game().then(dataJSON => {
-  // Конец игры
-  let gameOver = () => {
-    container.innerHTML = '';
-    questionNumber = 0;
+  // 50/50
+  let hintFiftyFifty = (dataQuestion, allAnswers) => {
+    hint1 = false;
 
-    let end = document.createElement('div');
-    container.appendChild(end).id = 'end';
+    delete allAnswers[dataQuestion["answer"]];
+    let res = Object.keys(allAnswers);
 
-    let gameEnd = document.createElement('p');
-    end.appendChild(gameEnd).id = 'game-end';
+    let rand1 = Math.floor(Math.random() * (Object.keys(allAnswers).length));
+    let rand2 = Math.floor(Math.random() * (Object.keys(allAnswers).length));
 
-    let playAgain = document.createElement('button');
-    playAgain.innerHTML = 'Play again';
-    end.appendChild(playAgain).id = 'play-again';
-    playAgain.addEventListener("click", () => startGame());
+    if (rand1 !== rand2) {
+      let wrongAnswer1 = document.getElementById(`${res[rand1]}`);
+      let wrongAnswer2 = document.getElementById(`${res[rand2]}`);
+
+      wrongAnswer1.style.visibility = 'hidden';
+      wrongAnswer2.style.visibility = 'hidden';
+    } else {
+      rand2 = Math.floor(Math.random() * (Object.keys(allAnswers).length));
+      hintFiftyFifty(dataQuestion, allAnswers);
+    }
+  }
+
+  // Пропустить вопрос
+  let hintSkipTheQuestion = () => {
+    hint2 = false;
+    outputRandomQuestions();
   }
 
   // Проверка ответа на правильность
@@ -38,7 +51,7 @@ game().then(dataJSON => {
         (
           outputRandomQuestions()
         ) : (
-          gameOver()
+          console.log('No correct!')
         )
     })
   }
@@ -57,6 +70,14 @@ game().then(dataJSON => {
     let skipTheQuestionBtn = document.createElement('button');
     skipTheQuestionBtn.innerHTML = 'Skip the question';
     mainContent.appendChild(skipTheQuestionBtn).id = 'skipTheQuestionBtn';
+
+    if (hint1 === false) {
+      fiftyFiftyBtn.style.display = 'none'
+    }
+
+    if (hint2 === false) {
+      skipTheQuestionBtn.style.display = 'none'
+    }
 
     // Вывод вопросов
     let questions__container = document.createElement('div');
@@ -85,41 +106,12 @@ game().then(dataJSON => {
         checkTheAnswer(answerItem, dataQuestion);
       }
     } else {
-      gameOver();
+      console.log('You win!')
     }
+
+    fiftyFiftyBtn.addEventListener("click", () => hintFiftyFifty(dataQuestion, allAnswers));
+    skipTheQuestionBtn.addEventListener("click", () => hintSkipTheQuestion());
   }
 
-  // Ввод имени
-  let enterName = () => {
-    container.innerHTML = '';
-
-    let startContent = document.createElement('div');
-    container.appendChild(startContent).id = 'start__content';
-
-    let inputUserName = document.createElement('input');
-    inputUserName.setAttribute('placeholder', 'Enter your name');
-    startContent.appendChild(inputUserName).id = 'input__user-name';
-
-    let startBtn = document.createElement('button');
-    startBtn.innerHTML = 'Ok';
-    startContent.appendChild(startBtn).id = 'start';
-
-    startBtn.addEventListener("click", () => {
-      outputRandomQuestions();
-    });
-  }
-
-  // Начало игры
-  let startGame = () => {
-    container.innerHTML = '';
-
-    let startGameBtn = document.createElement('button');
-    container.appendChild(startGameBtn);
-    startGameBtn.innerHTML = 'Start'
-
-    startGameBtn.addEventListener("click", () => enterName());
-  }
-
-  startGame();
-  
+  outputRandomQuestions();
 })
