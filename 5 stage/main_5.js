@@ -12,12 +12,13 @@ let hint2 = true;
 
 async function game() {
   const response = await fetch(URL);
-  const dataJSON = await response.json();
+  // console.log(response)
+  const dataJSON = response.json();
   return dataJSON;
 }
 
 game().then(dataJSON => {
-
+  // 50/50
   // 50/50
   let hintFiftyFifty = (dataQuestion, allAnswers) => {
     hint1 = false;
@@ -28,11 +29,16 @@ game().then(dataJSON => {
     let rand1 = Math.floor(Math.random() * (Object.keys(allAnswers).length));
     let rand2 = Math.floor(Math.random() * (Object.keys(allAnswers).length));
 
-    let wrongAnswer1 = document.getElementById(`${res[rand1]}`);
-    let wrongAnswer2 = document.getElementById(`${res[rand2]}`);
+    if (rand1 !== rand2) {
+      let wrongAnswer1 = document.getElementById(`${res[rand1]}`);
+      let wrongAnswer2 = document.getElementById(`${res[rand2]}`);
 
-    wrongAnswer1.style.visibility = 'hidden';
-    wrongAnswer2.style.visibility = 'hidden';
+      wrongAnswer1.style.visibility = 'hidden';
+      wrongAnswer2.style.visibility = 'hidden';
+    } else {
+      rand2 = Math.floor(Math.random() * (Object.keys(allAnswers).length));
+      hintFiftyFifty(dataQuestion, allAnswers);
+    }
   }
 
   // Пропустить вопрос
@@ -72,7 +78,7 @@ game().then(dataJSON => {
     let playAgain = document.createElement('button');
     playAgain.innerHTML = 'Play again';
     end.appendChild(playAgain).id = 'play-again';
-    bank === 1000000 ?   gameEnd.innerHTML = `${userName}, сongratulations! You are a millionaire! You have earned: ${bank}$`
+    bank === 1000000 ? gameEnd.innerHTML = `${userName}, сongratulations! You are a millionaire! You have earned: ${bank}$`
       : gameEnd.innerHTML = `${userName}, you've lost! You have earned: ${bank}$`
 
     playAgain.addEventListener("click", () => startGame());
@@ -177,6 +183,7 @@ game().then(dataJSON => {
   // Начало игры
   let startGame = () => {
     container.innerHTML = '';
+    bank = 0;
 
     let startGameBtn = document.createElement('button');
     container.appendChild(startGameBtn);
@@ -186,5 +193,5 @@ game().then(dataJSON => {
   }
 
   startGame();
-  
+
 })
