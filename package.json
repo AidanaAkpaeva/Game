@@ -5,7 +5,7 @@
     "puppeteer": "^19.3.0"
   },
   "scripts": {
-    "test": "mocha testgit add ."
+    "test": "mocha test"
   },
   "type": "module",
   "dependencies": {
