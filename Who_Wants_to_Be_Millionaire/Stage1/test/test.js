@@ -13,14 +13,22 @@ class Test extends StageTest {
       return correct()
     }),
 
-    // Test 2 - check the function game()
+    // Test 2 - check container
+    this.page.execute(() => {
+      const container = document.getElementById("container");
+      return container ?
+        correct() :
+        wrong("Not found container. You should create a container with id=container")
+    }),
+
+    // Test 3 - check the function game()
     this.page.execute(() => {
       return typeof game() === "object" ?
         correct() :
         wrong("Not found function game(). Your page must contain a function with 'game()' name.")
     }),
 
-    // Test 3 - check the container for contents
+    // Test 4 - check the container for contents
     this.page.execute(async () => {
       const URL = "http://localhost:8080/question.json";
 

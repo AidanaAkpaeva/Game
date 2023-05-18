@@ -144,7 +144,7 @@ const game = async () => {
           checkTheAnswer(answerItem, dataQuestion);
         }
       } else {
-        console.log('You win!')
+        gameOver();
       }
 
       fiftyFiftyBtn.addEventListener("click", () => hintFiftyFifty(dataQuestion, allAnswers));

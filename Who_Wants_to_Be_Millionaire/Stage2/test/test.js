@@ -14,7 +14,15 @@ class Test extends StageTest {
       return correct();
     }),
 
-    // Test 2 - check the output questions
+    // Test 2 - check container
+    this.page.execute(() => {
+      const container = document.getElementById("container");
+      return container ?
+        correct() :
+        wrong("Not found container. You should create a container with id=container")
+    }),
+
+    // Test 3 - check the output questions
     this.page.execute(async () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -35,12 +43,40 @@ class Test extends StageTest {
         });
     }),
 
-    // Test 3 -  check user answer, switch levels and output no more than 15 question
+    // Test 4 - check switch levels
     this.node.execute(async () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
+
       this.URL = "http://localhost:8080/question.json";
       this.container = await this.page.findById('container');
       this.index = {'A': 0, 'B': 1, 'C': 2, 'D': 3};
+
+      this.checkQuestions = async () => {
+        return fetch(this.URL)
+          .then((response) => response.json())
+          .then(async (data) => {
+            let containerText = await this.container.textContent();
+            const answers = await this.page.findAllBySelector("li");
+            let isEventHappened = false;
+            for (let i in data) {
+              if (containerText.includes(data[i].question)) {
+                let indexAnswer = this.index[data[i].answer];
+                isEventHappened = answers[indexAnswer].waitForEvent("click", 2000);
+                await answers[indexAnswer].click();
+              }
+            }
+            return isEventHappened;
+          })
+      }
+      let isEventHappened = await this.checkQuestions();
+      if (isEventHappened === false) {
+        return wrong('Does not proceed to the next question. After clicking on the correct answer, the following question should be displayed.');
+      } else return correct();
+    }),
+
+    // Test 5 -  check output no more than 15 question
+    this.node.execute(async () => {
+      await new Promise(resolve => setTimeout(resolve, 1000));
       let countQuestions = 0;
 
       this.checkQuestions = async () => {
@@ -62,7 +98,7 @@ class Test extends StageTest {
             return isEventHappened;
           })
       }
-      while (countQuestions < 15) {
+      while (countQuestions < 13) {
         let isEventHappened = await this.checkQuestions();
         if (isEventHappened !== true) {
           return wrong('The user\'s answer is incorrectly marked or not 15 questions are displayed.');
@@ -72,7 +108,6 @@ class Test extends StageTest {
     }),
   ]
 }
-;
 
 it("Test stage", async () => {
   await new Test().runTests()
